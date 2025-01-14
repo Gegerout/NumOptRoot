@@ -45,7 +45,7 @@
 
 1. Клонируйте репозиторий:
    ```bash
-   git clone <URL>
+   git clone https://github.com/Gegerout/NumOptRoot
    ```
 
 2. Перейдите в директорию проекта:
