@@ -1,6 +1,5 @@
-from numpy import std
 from dichotomy import dichotomy_method
-from math import log2, tan, pi
+from math import log2
 from typing import Callable, Tuple, List
 
 
@@ -107,46 +106,6 @@ def find_all_roots(f: Callable[[float], float], a: float, b: float, epsilon: flo
     for interval in intervals:
         try:
             x += [modified_solver(f, *interval, epsilon, 0)]
-        except MathError:
-            pass
+        except MathError as e:
+            print(e)
     return [e for e in x if type(e) != str]
-
-
-# Определение функций
-def f(x):
-    return x ** 2 - 2.28 * x
-
-
-def k(x):
-    return tan(x)
-
-
-# Ищем корень для f(x) = x - 2 на интервале [-30000000, 4]
-_, c = solver(lambda x: x - 2, -30000000, 4, 0.001, 0)
-print(c, "~", num_iterations(-30000000, 4, 0.001))
-
-# Ищем корень для f(x) = x - 2 на интервале [-3, 25]
-_, c = solver(lambda x: x - 2, -3, 25, 0.001, 0)
-print(c, "~", num_iterations(-3, 25, 0.001))
-
-# Ищем корень для f(x) = x^2 - 2 на интервале [0, 999999999999999999]
-_, c = solver(lambda x: x ** 2 - 2, 0, 999999999999999999, 0.001, 0)
-print(c, "~", num_iterations(-500, 999999999999999999, 0.001), '\n')
-
-
-# Рассчитываем среднеквадратичное отклонение для численного решения
-print('СКО для функции f(x):', std([2.28, solver(f, 0.00001, 1000, 0.01, 0)[0]]))
-print('СКО для функции k(x):', std([pi, solver(k, 2.5252525252, 4.2, 0.0001, 0)[0]]), '\n')
-
-
-# Обработка случая, когда решения функции на заданном отрезке нет
-try:
-    root, c = modified_solver(lambda x: x**2 + 2, -3, 5, 0.001, 0)
-    print(root)
-except MathError as e:
-    print(e)
-
-
-# Смотрим на множественный вывод корней
-roots = [e[0] for e in find_all_roots(lambda x: x**2 - 2.28*x, 0.0001, 10000, 0.0001) if type(e[0]) != str]
-print('\nКорни:', ', '.join(map(str, roots)))
