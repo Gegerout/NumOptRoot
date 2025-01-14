@@ -1,10 +1,6 @@
 import sympy as sp
 from dichotomy import dichotomy_method, dichotomy_method_with_history, plot_dichotomy_results
 from root_solver import find_all_roots
-import sys
-
-
-sys.setrecursionlimit(10000)
 
 
 def parse_function(input_function):
@@ -63,17 +59,32 @@ def parse_function(input_function):
 
 if __name__ == "__main__":
     while True:
-        print("\nМеню:")
+        print("Меню:")
         print("1 - Метод дихотомии для поиска минимума")
         print("2 - Метод дихотомии для поиска минимума с визуализацией")
         print("3 - Решение уравнения f(x) = 0")
-        print("4 - Выход")
+        print("4 - Инструкция")
+        print("5 - Выход")
 
         choice = input("Выберите опцию: ")
 
-        if choice == "4":
+        if choice == "5":
             print("Выход из программы.")
             break
+
+        if choice == "4":
+            print("\nИнструкция:")
+            print("Введите функцию f(x) в следующем формате:")
+            print("Пример: x**2 - 2*sin(x) + exp(x)")
+            print("\nПоддерживаемые функции:")
+            print(", ".join([
+                'sin', 'cos', 'tan', 'ctg', 'sec', 'csc',
+                'asin', 'acos', 'atan', 'acot', 'asec', 'acsc',
+                'sinh', 'cosh', 'tanh', 'coth', 'sech', 'csch',
+                'asinh', 'acosh', 'atanh', 'acoth', 'asech', 'acsch',
+                'exp', 'ln', 'log', 'sqrt', 'pow', 'e', 'pi', 'abs', 'floor', 'ceil', 'sign', 'gamma', 'factorial'
+            ]))
+            continue
 
         user_function = input("Введите функцию f(x): ")
         f = parse_function(user_function)
