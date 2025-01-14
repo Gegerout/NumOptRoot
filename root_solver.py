@@ -1,7 +1,7 @@
 from numpy import std
 from dichotomy import dichotomy_method
 from math import log2, tan, pi
-from typing import Callable, Tuple
+from typing import Callable, Tuple, List
 
 
 class MathError(Exception):
@@ -19,17 +19,18 @@ def solver(f: Callable[[float], float], a: float, b: float, epsilon: float, c: i
     :param c: Счетчик количества итераций.
     :return: Кортеж с найденным корнем и количеством итераций.
     """
-    # Критерий остановки: если разница между концами отрезка меньше погрешности
-    if abs(b - a) < epsilon:
-        return (a + b) / 2, c
-
-    c += 1
 
     # Проверка знаков функции на концах отрезка
     if f(a) * f(b) > 0:
         res = dichotomy_method(a, b, epsilon, f)
 
         return solver(f, a, res, epsilon, c)  # Рекурсивно ищем корень на уменьшенном отрезке
+
+    # Критерий остановки: если разница между концами отрезка меньше погрешности
+    if abs(b - a) < epsilon:
+        return (a + b) / 2, c
+
+    c += 1
 
     # Вычисляем середины отрезка с учетом погрешности
     a1, b1 = (a + b - epsilon / 2) / 2, (a + b + epsilon / 2) / 2
@@ -51,11 +52,6 @@ def modified_solver(f: Callable[[float], float], a: float, b: float, epsilon: fl
     :param c: Счетчик количества итераций.
     :return: Кортеж с найденным корнем и количеством итераций.
     """
-    # Критерий остановки: если разница между концами отрезка меньше погрешности
-    if abs(b - a) < epsilon:
-        return (a + b) / 2, c
-
-    c += 1
 
     # Проверка знаков функции на концах отрезка
     if f(a) * f(b) > 0:
@@ -66,6 +62,12 @@ def modified_solver(f: Callable[[float], float], a: float, b: float, epsilon: fl
             return solver(f, a, res, epsilon, c)
         else:
             raise MathError("Корня нет, либо установить его наличие этим методом невозможно")
+
+    # Критерий остановки: если разница между концами отрезка меньше погрешности
+    if abs(b - a) < epsilon:
+        return (a + b) / 2, c
+
+    c += 1
 
     # Вычисляем середины отрезка с учетом погрешности
     a1, b1 = (a + b - epsilon / 2) / 2, (a + b + epsilon / 2) / 2
@@ -87,6 +89,21 @@ def num_iterations(a: float, b: float, epsilon: float) -> float:
     """
     # Логарифмическая зависимость для количества итераций
     return log2(-(epsilon - 2 * abs(b - a)) / epsilon)
+
+
+def find_all_roots(f: Callable[[float], float], a: float, b: float, epsilon: float) -> List:
+    """
+    Ищем все корни функции на заданном отрезке (при условии, что функция строго унимодальна)
+
+    :param f: Функция, для которой ищется корень.
+    :param a: Начало отрезка.
+    :param b: Конец отрезка.
+    :param epsilon: Погрешность, при которой алгоритм завершится.
+    :return: Теоретическое количество итераций.
+    """
+    extremum = dichotomy_method(a, b, epsilon, f)
+    x = [modified_solver(f, a, extremum, epsilon, 0)[0], modified_solver(f, extremum, b, epsilon, 0)[0]]
+    return [e for e in x if type(e) != str]
 
 
 # Определение функций
@@ -122,3 +139,8 @@ try:
     print(root)
 except MathError as e:
     print(e)
+
+
+# Смотрим на множественный вывод корней
+roots = find_all_roots(lambda x: x**2 - 2, -5, 5, 0.0001)
+print('\nКорни:', ', '.join(map(str, roots)))
