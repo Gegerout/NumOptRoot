@@ -58,7 +58,7 @@ def modified_solver(f: Callable[[float], float], a: float, b: float, epsilon: fl
         res = dichotomy_method(a, b, epsilon, f)
 
         # Проверяем, есть ли корень на отрезке, иначе выбрасываем исключение
-        if any([f(res) <= 0, f(res - epsilon / 2) <= 0, f(res + epsilon / 2) <= 0]):
+        if any([f(res) * f(a) <= 0, f(res - epsilon / 2) * f(a) <= 0, f(res + epsilon / 2) * f(a) <= 0]):
             return solver(f, a, res, epsilon, c)
         else:
             raise MathError("Корня нет, либо установить его наличие этим методом невозможно")
@@ -102,7 +102,13 @@ def find_all_roots(f: Callable[[float], float], a: float, b: float, epsilon: flo
     :return: Теоретическое количество итераций.
     """
     extremum = dichotomy_method(a, b, epsilon, f)
-    x = [modified_solver(f, a, extremum, epsilon, 0), modified_solver(f, extremum, b, epsilon, 0)]
+    intervals = [(a, extremum), (extremum, b)]
+    x = []
+    for interval in intervals:
+        try:
+            x += [modified_solver(f, *interval, epsilon, 0)]
+        except MathError:
+            pass
     return [e for e in x if type(e) != str]
 
 
@@ -142,5 +148,5 @@ except MathError as e:
 
 
 # Смотрим на множественный вывод корней
-roots = [e[0] for e in find_all_roots(lambda x: x**2 - 2, -5, 5, 0.0001)]
+roots = [e[0] for e in find_all_roots(lambda x: x**2 - 2.28*x, 0.0001, 10000, 0.0001) if type(e[0]) != str]
 print('\nКорни:', ', '.join(map(str, roots)))
