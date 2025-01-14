@@ -108,4 +108,4 @@ def find_all_roots(f: Callable[[float], float], a: float, b: float, epsilon: flo
             x += [modified_solver(f, *interval, epsilon, 0)]
         except MathError as e:
             print(e)
-    return [e for e in x if type(e) != str]
+    return [e for e in x if type(e) is not str]
