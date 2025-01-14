@@ -102,7 +102,7 @@ def find_all_roots(f: Callable[[float], float], a: float, b: float, epsilon: flo
     :return: Теоретическое количество итераций.
     """
     extremum = dichotomy_method(a, b, epsilon, f)
-    x = [modified_solver(f, a, extremum, epsilon, 0)[0], modified_solver(f, extremum, b, epsilon, 0)[0]]
+    x = [modified_solver(f, a, extremum, epsilon, 0), modified_solver(f, extremum, b, epsilon, 0)]
     return [e for e in x if type(e) != str]
 
 
@@ -142,5 +142,5 @@ except MathError as e:
 
 
 # Смотрим на множественный вывод корней
-roots = find_all_roots(lambda x: x**2 - 2, -5, 5, 0.0001)
+roots = [e[0] for e in find_all_roots(lambda x: x**2 - 2, -5, 5, 0.0001)]
 print('\nКорни:', ', '.join(map(str, roots)))
